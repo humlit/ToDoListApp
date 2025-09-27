@@ -14,10 +14,10 @@ class ToDoViewModel(
     private val _todoState = MutableStateFlow(initialState)
     val todoState: StateFlow<ToDoState> = _todoState.asStateFlow()
     
-    fun addSomeNote(note: String) {
+    fun addSomeNote(toDoName: String, toDoContent: String) {
         _todoState.update { currentState ->
             val newCase = ToDo(
-                case = note, caseId = (currentState.toDoList.last().caseId + 1)
+                caseName = toDoName, case = toDoContent
             )
             
             currentState.copy(
@@ -26,18 +26,49 @@ class ToDoViewModel(
         }
     }
     
-    fun activeChange(caseId: Int) {
+    fun activeChange(toDo: ToDo) {
         _todoState.update { currentState ->
             currentState.copy(
-                toDoList = currentState.toDoList.map { case->
-                    if (case.caseId == caseId) {
+                toDoList = currentState.toDoList.map { case ->
+                    if (case.caseId == toDo.caseId) {
                         case.copy(
-                        isActive = !case.isActive
+                            isActive = !case.isActive
                         )
                     } else {
                         case
                     }
+                })
+        }
+    }
+    
+    fun removeCase(toDo: ToDo) {
+        _todoState.update { currentState ->
+            val newToDoList: List<ToDo> = currentState.toDoList.toMutableList().apply {
+                removeAll { it.caseId == toDo.caseId }
+            }
+            
+            currentState.copy(
+                toDoList = newToDoList
+            )
+        }
+    }
+    
+    fun editCase(toDo: ToDo, newCaseText: String) {
+        _todoState.update { currentState ->
+            val newToDoList = currentState.toDoList.map { todo ->
+                when {
+                    todo.caseId == toDo.caseId -> {
+                        todo.copy(
+                            caseName = newCaseText
+                        )
+                    }
+                    
+                    else -> todo
                 }
+            }
+            
+            currentState.copy(
+                toDoList = newToDoList
             )
         }
     }
