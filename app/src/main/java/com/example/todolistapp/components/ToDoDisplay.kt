@@ -1,5 +1,6 @@
 package com.example.todolistapp.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,25 +24,36 @@ fun ToDoDisplay(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { activeChange(todo) },
+            .clickable { activeChange(todo) }
+            .padding(4.dp)
+            .background(color = Color.LightGray),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column {
-            CustomText(text = todo.caseName, truthCheck = todo.isActive)
-            Text(text = todo.case)
+        Column(
+        ) {
+            CustomText(todo = todo)
         }
     }
 }
 
 @Composable
-fun CustomText(modifier: Modifier = Modifier, text: String, truthCheck: Boolean) {
+fun CustomText(modifier: Modifier = Modifier, todo: ToDo) {
     Text(
         modifier = Modifier
             .padding(vertical = 10.dp, horizontal = 5.dp)
             .then(modifier),
-        text = text,
-        color = if (truthCheck) Color.Black else Color.Gray,
-        textDecoration = if (truthCheck) TextDecoration.None else TextDecoration.LineThrough
+        text = todo.caseName,
+        color = if (todo.isActive) Color.Black else Color.Gray,
+        textDecoration = if (todo.isActive) TextDecoration.None else TextDecoration.LineThrough
+    )
+    
+    Text(
+        modifier = Modifier
+            .padding(vertical = 10.dp, horizontal = 5.dp)
+            .then(modifier),
+        text = todo.case,
+        color = if (todo.isActive) Color.Black else Color.Gray,
+        textDecoration = if (todo.isActive) TextDecoration.None else TextDecoration.LineThrough
     )
 }

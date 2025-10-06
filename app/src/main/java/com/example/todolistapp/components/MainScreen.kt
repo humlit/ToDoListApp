@@ -2,18 +2,21 @@ package com.example.todolistapp.components
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -33,21 +36,30 @@ import com.example.todolistapp.viewmodel.ToDoViewModel
 fun MainScreen(viewModel: ToDoViewModel) {
     val state = viewModel.todoState.collectAsState().value
     
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text(text = "Just do it!") }, navigationIcon = {
-                Icon(Icons.Default.Menu, null)
-            })
-        }) { paddingValues ->
+    Scaffold(topBar = {
+        TopAppBar(title = { Text(text = "Just do it!") }, navigationIcon = {
+            IconButton(onClick = {}) {
+                Icon(
+                    imageVector = Icons.Default.Menu, contentDescription = null
+                )
+            }
+        })
+    }, floatingActionButton = {
+        IconButton(onClick = {}, colors = IconButtonDefaults.iconButtonColors(containerColor = Color.LightGray, contentColor = Color.Black)) {
+            Icon(
+                modifier = Modifier.size(30.dp),
+                imageVector = Icons.Default.Add, contentDescription = null
+            )
+        }
+    }) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(all = 5.dp)
                 .background(color = Color.White)
-                .border(width = 3.dp, color = Color.Black)
         ) {
-            items(state.toDoList, key = { todo -> todo.caseId }) { todo ->
+            items(state.toDoState.toDoList, key = { todo -> todo.caseId }) { todo ->
                 val swipeToDismissBoxState = rememberSwipeToDismissBoxState(
                     confirmValueChange = { dismissValue ->
                         when (dismissValue) {
@@ -100,5 +112,5 @@ fun MainScreen(viewModel: ToDoViewModel) {
             }
         }
     }
-    Log.d("LIST_CHECK", state.toDoList.toString())
+    Log.d("LIST_CHECK", state.toDoState.toDoList.toString())
 }

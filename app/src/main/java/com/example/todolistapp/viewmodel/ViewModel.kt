@@ -21,41 +21,50 @@ class ToDoViewModel(
             )
             
             currentState.copy(
-                toDoList = currentState.toDoList + newCase
+                toDoState = currentState.toDoState.copy(
+                    toDoList = currentState.toDoState.toDoList + newCase
+                )
             )
         }
     }
     
     fun activeChange(toDo: ToDo) {
         _todoState.update { currentState ->
+            val updatedTasks = currentState.toDoState.toDoList.map { case ->
+                if (case.caseId == toDo.caseId) {
+                    case.copy(
+                        isActive = !case.isActive
+                    )
+                } else {
+                    case
+                }
+            }
+            
             currentState.copy(
-                toDoList = currentState.toDoList.map { case ->
-                    if (case.caseId == toDo.caseId) {
-                        case.copy(
-                            isActive = !case.isActive
-                        )
-                    } else {
-                        case
-                    }
-                })
+                toDoState = currentState.toDoState.copy(
+                    toDoList = updatedTasks
+                )
+            )
         }
     }
     
     fun removeCase(toDo: ToDo) {
         _todoState.update { currentState ->
-            val newToDoList: List<ToDo> = currentState.toDoList.toMutableList().apply {
+            val newToDoList = currentState.toDoState.toDoList.toMutableList().apply {
                 removeAll { it.caseId == toDo.caseId }
             }
             
             currentState.copy(
-                toDoList = newToDoList
+                toDoState = currentState.toDoState.copy(
+                    toDoList = newToDoList
+                )
             )
         }
     }
     
     fun editCase(toDo: ToDo, newCaseText: String) {
         _todoState.update { currentState ->
-            val newToDoList = currentState.toDoList.map { todo ->
+            val newToDoList = currentState.toDoState.toDoList.map { todo ->
                 when {
                     todo.caseId == toDo.caseId -> {
                         todo.copy(
@@ -68,7 +77,9 @@ class ToDoViewModel(
             }
             
             currentState.copy(
-                toDoList = newToDoList
+                toDoState = currentState.toDoState.copy(
+                    toDoList = newToDoList
+                )
             )
         }
     }
