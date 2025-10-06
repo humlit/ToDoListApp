@@ -7,5 +7,5 @@ data class ToDo(
     val case: String,
     val caseId: UUID = UUID.randomUUID(),
     val isActive: Boolean = true,
-    val filterType: String? = null
+    val filter: String = FiltersState().tasksFilterType.first(),
 )
