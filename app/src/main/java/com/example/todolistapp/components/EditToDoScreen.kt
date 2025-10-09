@@ -2,6 +2,7 @@ package com.example.todolistapp.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,13 +48,15 @@ fun EditToDoScreen(
             LazyHorizontalGrid(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height((ceil((filtersState.tasksFilterType.size / 5.toDouble())).toInt() * 40).dp),
+                    .height((ceil((filtersState.tasksFilterType.size / 5.toDouble())).toInt() * 50).dp),
                 rows = GridCells.Fixed(ceil((filtersState.tasksFilterType.size / 5.toDouble())).toInt()),
             ) {
                 items(filtersState.tasksFilterType) { filter ->
-                    FilterUI(filter, onCLick = { viewModel.changeFilter(filter) })
+                    EditMenuFilterUI(filter, onCLick = { viewModel.changeFilter(filter) })
                 }
             }
+            
+            Spacer(modifier = Modifier.height(10.dp))
             
             TextField(
                 modifier = Modifier.fillMaxWidth(),

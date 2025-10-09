@@ -3,6 +3,7 @@ package com.example.todolistapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.todolistapp.classes.EditToDoState
+import com.example.todolistapp.classes.Filter
 import com.example.todolistapp.classes.HomeScreenState
 import com.example.todolistapp.classes.TasksState
 import com.example.todolistapp.classes.ToDo
@@ -69,6 +70,12 @@ class ToDoViewModel() : ViewModel() {
         }
     }
     
+//    fun addNewFilter() {
+//        _todoState.update { currentState ->
+//
+//        }
+//    }
+    
     fun removeCase(toDo: ToDo) {
         _todoState.update { currentState ->
             if (currentState !is HomeScreenState.ToDos) return@update currentState
@@ -87,7 +94,7 @@ class ToDoViewModel() : ViewModel() {
         }
     }
     
-    fun changeFilter(filter: String) {
+    fun changeFilter(filter: Filter) {
         _todoState.update { currentState ->
             val editable = currentState as? EditToDoState ?: return@update currentState
             
