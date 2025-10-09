@@ -22,14 +22,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.todolistapp.classes.FiltersState
+import com.example.todolistapp.classes.ToDo
 import com.example.todolistapp.viewmodel.ToDoViewModel
-import kotlinx.coroutines.flow.asStateFlow
+import kotlin.math.ceil
 
 @Composable
-fun EditToDoScreen(viewModel: ToDoViewModel) {
-    var text by remember { mutableStateOf(TextFieldValue("")) }
+fun EditToDoScreen(
+    viewModel: ToDoViewModel, filtersState: FiltersState, todo: ToDo,
+) {
+    var case by remember { mutableStateOf(TextFieldValue(todo.case)) }
     
     Scaffold(
         modifier = Modifier
@@ -41,20 +44,21 @@ fun EditToDoScreen(viewModel: ToDoViewModel) {
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-            
             LazyHorizontalGrid(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp),
-                rows = GridCells.Adaptive(minSize = 30.dp)
+                    .height((ceil((filtersState.tasksFilterType.size / 5.toDouble())).toInt() * 40).dp),
+                rows = GridCells.Fixed(ceil((filtersState.tasksFilterType.size / 5.toDouble())).toInt()),
             ) {
-            
+                items(filtersState.tasksFilterType) { filter ->
+                    FilterUI(filter, onCLick = { viewModel.changeFilter(filter) })
+                }
             }
             
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = text,
-                onValueChange = { text = it },
+                value = case,
+                onValueChange = { case = it },
                 label = { Text("Меняем планы на жизнь") },
                 colors = TextFieldDefaults.colors(
                     unfocusedLabelColor = Color.Black,
@@ -65,10 +69,19 @@ fun EditToDoScreen(viewModel: ToDoViewModel) {
             )
             
             Row {
-                TextButton(onClick = {}) { Text(text = "Отменить") }
-                TextButton(onClick = {}) { Text(text = "Сохранить") }
+                TextButton(onClick = {
+                    viewModel.backToMainScreen()
+                }) { Text(text = "Отменить") }
+                
+                TextButton(onClick = {
+                    val updatedToDo = todo.copy(
+                        case = case.text
+                    )
+                    if (updatedToDo.case.isNotEmpty()) {
+                        viewModel.confirmToDoChangesOrAddNewToDo(updatedToDo)
+                    }
+                }) { Text(text = "Сохранить") }
             }
-            
         }
     }
 }

@@ -2,9 +2,7 @@ package com.example.todolistapp.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -14,46 +12,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import com.example.todolistapp.classes.ToDo
 
 @Composable
-fun ToDoDisplay(
+fun ToDoDisplayForm(
     todo: ToDo,
     activeChange: (ToDo) -> Unit,
 ) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { activeChange(todo) }
             .padding(4.dp)
-            .background(color = Color.LightGray),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+            .background(color = Color.Transparent),
     ) {
-        Column(
-        ) {
-            CustomText(todo = todo)
-        }
+        CustomText(case = todo.case, caseIsDone = todo.isDone)
+        Text(modifier = Modifier.align(alignment = Alignment.End).padding(end = 8.dp, bottom = 8.dp), text = "${todo.filter}#")
     }
 }
 
 @Composable
-fun CustomText(modifier: Modifier = Modifier, todo: ToDo) {
+fun CustomText(modifier: Modifier = Modifier, case: String, caseIsDone: Boolean) {
     Text(
         modifier = Modifier
             .padding(vertical = 10.dp, horizontal = 5.dp)
             .then(modifier),
-        text = todo.caseName,
-        color = if (todo.isActive) Color.Black else Color.Gray,
-        textDecoration = if (todo.isActive) TextDecoration.None else TextDecoration.LineThrough
-    )
-    
-    Text(
-        modifier = Modifier
-            .padding(vertical = 10.dp, horizontal = 5.dp)
-            .then(modifier),
-        text = todo.case,
-        color = if (todo.isActive) Color.Black else Color.Gray,
-        textDecoration = if (todo.isActive) TextDecoration.None else TextDecoration.LineThrough
+        text = case,
+        color = if (caseIsDone) Color.Gray else Color.Black,
+        textDecoration = if (caseIsDone) TextDecoration.LineThrough else TextDecoration.None
     )
 }

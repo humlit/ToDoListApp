@@ -1,7 +1,20 @@
 package com.example.todolistapp.classes
 
+interface EditToDoState {
+    val data: ToDoState
+    fun updateData(newData: ToDoState): HomeScreenState
+}
+
+
 sealed class HomeScreenState {
-    data class ToDos(val todoList: List<ToDo>) : HomeScreenState()
+    object Initial : HomeScreenState()
     
-    data class EditToDo(val editToDo: ToDo) : HomeScreenState()
+    data class ToDos(val data: ToDoState) : HomeScreenState()
+    data class EditToDo(override val data: ToDoState) : HomeScreenState(), EditToDoState {
+        override fun updateData(newData: ToDoState) = copy(data = newData)
+    }
+    
+    data class AddToDo(override val data: ToDoState) : HomeScreenState(), EditToDoState {
+        override fun updateData(newData: ToDoState) = copy(data = newData)
+    }
 }

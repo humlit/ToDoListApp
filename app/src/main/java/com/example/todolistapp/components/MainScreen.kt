@@ -1,116 +1,33 @@
 package com.example.todolistapp.components
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.todolistapp.classes.HomeScreenState
 import com.example.todolistapp.viewmodel.ToDoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: ToDoViewModel) {
-    val state = viewModel.todoState.collectAsState().value
+    val state = viewModel.todoState.collectAsStateWithLifecycle()
     
-    Scaffold(topBar = {
-        TopAppBar(title = { Text(text = "Just do it!") }, navigationIcon = {
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Default.Menu, contentDescription = null
-                )
-            }
-        })
-    }, floatingActionButton = {
-        IconButton(onClick = {}, colors = IconButtonDefaults.iconButtonColors(containerColor = Color.LightGray, contentColor = Color.Black)) {
-            Icon(
-                modifier = Modifier.size(30.dp),
-                imageVector = Icons.Default.Add, contentDescription = null
+    when (val currentState = state.value) {
+        is HomeScreenState.ToDos -> {
+            ToDoListScreen(viewModel = viewModel, todoList = currentState.data.toDosState.toDoList)
+            Log.d("LIST_CHECK", currentState.data.toDosState.toDoList.toString())
+        }
+        
+        is HomeScreenState.EditToDo, is HomeScreenState.AddToDo -> {
+            EditToDoScreen(
+                viewModel = viewModel,
+                filtersState = currentState.data.filterState,
+                todo = currentState.data.toDosState.selectedToDo,
             )
         }
-    }) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(all = 5.dp)
-                .background(color = Color.White)
-        ) {
-            items(state.toDoState.toDoList, key = { todo -> todo.caseId }) { todo ->
-                val swipeToDismissBoxState = rememberSwipeToDismissBoxState(
-                    confirmValueChange = { dismissValue ->
-                        when (dismissValue) {
-                            SwipeToDismissBoxValue.EndToStart -> {
-                                viewModel.removeCase(toDo = todo)
-                                true
-                            }
-                            
-                            SwipeToDismissBoxValue.StartToEnd -> {
-                                
-                                false
-                            }
-                            
-                            else -> false
-                        }
-                    })
-                
-                SwipeToDismissBox(
-                    state = swipeToDismissBoxState, backgroundContent = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = Color.Transparent)
-                        ) {
-                            when (swipeToDismissBoxState.dismissDirection) {
-                                SwipeToDismissBoxValue.StartToEnd -> {
-                                    Icon(
-                                        modifier = Modifier.align(Alignment.CenterStart),
-                                        imageVector = Icons.Default.Edit,
-                                        contentDescription = null
-                                    )
-                                }
-                                
-                                SwipeToDismissBoxValue.EndToStart -> {
-                                    Icon(
-                                        modifier = Modifier.align(Alignment.CenterEnd),
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = null
-                                    )
-                                }
-                                
-                                SwipeToDismissBoxValue.Settled -> {}
-                            }
-                        }
-                    }) {
-                    ToDoDisplay(todo = todo, activeChange = {
-                        viewModel.activeChange(toDo = todo)
-                    })
-                }
-            }
+        
+        is HomeScreenState.Initial -> {
+        
         }
     }
-    Log.d("LIST_CHECK", state.toDoState.toDoList.toString())
 }

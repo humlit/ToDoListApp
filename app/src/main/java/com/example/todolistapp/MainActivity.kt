@@ -1,10 +1,12 @@
 package com.example.todolistapp
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import com.example.todolistapp.components.EditToDoScreen
 import com.example.todolistapp.components.MainScreen
 import com.example.todolistapp.ui.theme.ToDoListAppTheme
