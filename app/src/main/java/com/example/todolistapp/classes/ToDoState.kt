@@ -11,13 +11,13 @@ data class TasksState(
 )
 
 data class FiltersState(
-    val tasksFilterType: List<Filter> = listOf(
+    val filterTypeList: List<Filter> = listOf(
         Filter(filterName = "None", filterColor = Color.Transparent), Filter(
             filterName = "Home", filterColor = Color.Red
         ), Filter(
             filterName = "Word", filterColor = Color.Blue
         ),Filter(
-            filterName = "Computer Science", filterColor = Color.Transparent
+            filterName = "Computer Science", filterColor = Color.Magenta
         )
     )
 )

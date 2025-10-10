@@ -17,6 +17,7 @@ fun MainScreen(viewModel: ToDoViewModel, onSettingScreen: () -> Unit) {
             ToDoListScreen(
                 viewModel = viewModel,
                 todoList = currentState.data.toDosState.toDoList,
+                filterList = currentState.data.filterState.filterTypeList,
                 onSettingScreenCallBack = { onSettingScreen() })
             Log.d("LIST_CHECK", currentState.data.toDosState.toDoList.toString())
         }

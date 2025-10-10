@@ -27,9 +27,7 @@ fun EditMenuFilterUI(filter: Filter, onCLick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
         TextButton(onClick = { onCLick() }) {
-            Text(text = filter.filterName, color = Color.Magenta)
+            Text(text = filter.filterName, color = Color.Black)
         }
     }
-    
-    
 }

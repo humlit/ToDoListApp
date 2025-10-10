@@ -11,9 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.todolistapp.classes.ToDo
+import com.example.todolistapp.ui.theme.Typography
 
 @Composable
 fun ToDoDisplayForm(
@@ -27,14 +29,14 @@ fun ToDoDisplayForm(
             .padding(4.dp)
             .background(color = Color.Transparent),
     ) {
-        HorizontalDivider()
         CustomText(case = todo.case, caseIsDone = todo.isDone)
         Text(
             modifier = Modifier
                 .align(alignment = Alignment.End)
                 .padding(end = 8.dp, bottom = 8.dp),
-            text = "${todo.filter.filterName}#"
+            text = "${todo.filter.filterName}#",
         )
+        HorizontalDivider(color = if (todo.isDone) Color.Green else Color.Red)
     }
 }
 

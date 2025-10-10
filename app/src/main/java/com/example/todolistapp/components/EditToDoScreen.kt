@@ -1,7 +1,6 @@
 package com.example.todolistapp.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,9 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -39,7 +43,30 @@ fun EditToDoScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(vertical = 36.dp, horizontal = 16.dp),
-        topBar = {}) { paddingValues ->
+        bottomBar = {
+            BottomAppBar(containerColor = Color.Transparent) {
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = {
+                            viewModel.backToMainScreen()
+                        },
+                        icon = { Icon(imageVector = Icons.Default.Close, contentDescription = null) },
+                        label = { Text(text = "Отменить") })
+                
+                NavigationBarItem(
+                    selected = false,
+                    onClick = {
+                        val updatedToDo = todo.copy(
+                            case = case.text
+                        )
+                        if (updatedToDo.case.isNotEmpty()) {
+                            viewModel.confirmToDoChangesOrAddNewToDo(updatedToDo)
+                        }
+                    },
+                    icon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+                    label = { Text(text = "Сохранить") })
+            }
+        }) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -48,10 +75,10 @@ fun EditToDoScreen(
             LazyHorizontalGrid(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height((ceil((filtersState.tasksFilterType.size / 5.toDouble())).toInt() * 50).dp),
-                rows = GridCells.Fixed(ceil((filtersState.tasksFilterType.size / 5.toDouble())).toInt()),
+                    .height((ceil((filtersState.filterTypeList.size / 5.toDouble())).toInt() * 50).dp),
+                rows = GridCells.Fixed(ceil((filtersState.filterTypeList.size / 5.toDouble())).toInt()),
             ) {
-                items(filtersState.tasksFilterType) { filter ->
+                items(filtersState.filterTypeList) { filter ->
                     EditMenuFilterUI(filter, onCLick = { viewModel.changeFilter(filter) })
                 }
             }
@@ -66,25 +93,10 @@ fun EditToDoScreen(
                 colors = TextFieldDefaults.colors(
                     unfocusedLabelColor = Color.Black,
                     focusedLabelColor = Color.Gray,
-                    unfocusedContainerColor = Color.LightGray,
-                    focusedContainerColor = Color.LightGray,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
                 ),
             )
-            
-            Row {
-                TextButton(onClick = {
-                    viewModel.backToMainScreen()
-                }) { Text(text = "Отменить") }
-                
-                TextButton(onClick = {
-                    val updatedToDo = todo.copy(
-                        case = case.text
-                    )
-                    if (updatedToDo.case.isNotEmpty()) {
-                        viewModel.confirmToDoChangesOrAddNewToDo(updatedToDo)
-                    }
-                }) { Text(text = "Сохранить") }
-            }
         }
     }
 }

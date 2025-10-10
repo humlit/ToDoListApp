@@ -1,6 +1,7 @@
 package com.example.todolistapp.viewmodel
 
 import android.util.Log
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.example.todolistapp.classes.EditToDoState
 import com.example.todolistapp.classes.Filter
@@ -70,11 +71,24 @@ class ToDoViewModel() : ViewModel() {
         }
     }
     
-//    fun addNewFilter() {
-//        _todoState.update { currentState ->
-//
-//        }
-//    }
+    fun addNewFilter(filterName: String, filterColor: Color) {
+        _todoState.update { currentState ->
+            val editable = currentState as EditToDoState
+            
+            val newFilter = Filter(filterName = filterName, filterColor = filterColor)
+            val filterTypeList = editable.data.filterState.filterTypeList.toMutableList().apply {
+                add(newFilter)
+            }
+            
+            val newData = editable.data.copy(
+                filterState = editable.data.filterState.copy(
+                    filterTypeList = filterTypeList
+                )
+            )
+            
+            editable.updateData(newData = newData)
+        }
+    }
     
     fun removeCase(toDo: ToDo) {
         _todoState.update { currentState ->
