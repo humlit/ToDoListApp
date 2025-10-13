@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class ToDoViewModel() : ViewModel() {
+    
     val sourceListToDO = mutableListOf<ToDo>().apply {
         add(ToDo(case = "Lets do it11"))
         add(ToDo(case = "Lets do it2"))
@@ -33,7 +34,6 @@ class ToDoViewModel() : ViewModel() {
             HomeScreenState.AddToDo(data = currentState.data)
         }
     }
-    
     
     fun openEditToDoScreen(editToDo: ToDo) {
         _todoState.update { currentState ->
@@ -71,22 +71,28 @@ class ToDoViewModel() : ViewModel() {
         }
     }
     
-    fun addNewFilter(filterName: String, filterColor: Color) {
+    fun addNewFilter(
+        filterName: String,
+        filterColor: Color
+    ) {
         _todoState.update { currentState ->
-            val editable = currentState as EditToDoState
+            if (currentState !is HomeScreenState.ToDos) return@update currentState
             
             val newFilter = Filter(filterName = filterName, filterColor = filterColor)
-            val filterTypeList = editable.data.filterState.filterTypeList.toMutableList().apply {
-                add(newFilter)
-            }
+            val filterTypeList = currentState.data.filterState.filterTypeList.toMutableList()
+                .apply {
+                    add(newFilter)
+                }
             
-            val newData = editable.data.copy(
-                filterState = editable.data.filterState.copy(
+            val newData = currentState.data.copy(
+                filterState = currentState.data.filterState.copy(
                     filterTypeList = filterTypeList
                 )
             )
             
-            editable.updateData(newData = newData)
+            currentState.copy(
+                data = newData
+            )
         }
     }
     

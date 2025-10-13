@@ -35,7 +35,9 @@ import kotlin.math.ceil
 
 @Composable
 fun EditToDoScreen(
-    viewModel: ToDoViewModel, filtersState: FiltersState, todo: ToDo,
+    viewModel: ToDoViewModel,
+    filtersState: FiltersState,
+    todo: ToDo,
 ) {
     var case by remember { mutableStateOf(TextFieldValue(todo.case)) }
     
@@ -45,13 +47,13 @@ fun EditToDoScreen(
             .padding(vertical = 36.dp, horizontal = 16.dp),
         bottomBar = {
             BottomAppBar(containerColor = Color.Transparent) {
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = {
-                            viewModel.backToMainScreen()
-                        },
-                        icon = { Icon(imageVector = Icons.Default.Close, contentDescription = null) },
-                        label = { Text(text = "Отменить") })
+                NavigationBarItem(
+                    selected = false,
+                    onClick = {
+                        viewModel.backToMainScreen()
+                    },
+                    icon = { Icon(imageVector = Icons.Default.Close, contentDescription = null) },
+                    label = { Text(text = "Отменить") })
                 
                 NavigationBarItem(
                     selected = false,
@@ -97,6 +99,7 @@ fun EditToDoScreen(
                     focusedContainerColor = Color.Transparent,
                 ),
             )
+            
         }
     }
 }

@@ -3,11 +3,13 @@ package com.example.todolistapp.classes
 import androidx.compose.ui.graphics.Color
 
 data class ToDoState(
-    val toDosState: TasksState = TasksState(), val filterState: FiltersState = FiltersState()
+    val toDosState: TasksState = TasksState(),
+    val filterState: FiltersState = FiltersState()
 )
 
 data class TasksState(
-    val toDoList: List<ToDo> = emptyList(), val selectedToDo: ToDo = ToDo(case = "")
+    val toDoList: List<ToDo> = emptyList(),
+    val selectedToDo: ToDo = ToDo(case = "")
 )
 
 data class FiltersState(
@@ -16,7 +18,7 @@ data class FiltersState(
             filterName = "Home", filterColor = Color.Red
         ), Filter(
             filterName = "Word", filterColor = Color.Blue
-        ),Filter(
+        ), Filter(
             filterName = "Computer Science", filterColor = Color.Magenta
         )
     )
