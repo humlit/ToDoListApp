@@ -1,5 +1,10 @@
-package com.example.todolistapp.components
+package com.example.todolistapp.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,19 +38,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todolistapp.classes.Filter
 import com.example.todolistapp.classes.ToDo
+import com.example.todolistapp.components.ColorUI
+import com.example.todolistapp.components.CustomModalNavigationDrawer
+import com.example.todolistapp.components.ToDoListDisplay
 import com.example.todolistapp.viewmodel.ToDoViewModel
 import kotlin.math.ceil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToDoListScreen(
-    viewModel: ToDoViewModel,
     todoList: List<ToDo>,
     filterList: List<Filter>,
     onSettingScreenCallBack: () -> Unit
 ) {
+    val viewModel: ToDoViewModel = viewModel()
+    
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     var isShowedPopUp by remember { mutableStateOf(false) }
     var newFilterName by remember { mutableStateOf("") }
@@ -60,9 +70,7 @@ fun ToDoListScreen(
     
     if (isShowedPopUp) {
         Popup(
-            alignment = Alignment.BottomCenter,
-            onDismissRequest = { isShowedPopUp = false },
-            properties = PopupProperties(
+            alignment = Alignment.BottomCenter, onDismissRequest = { isShowedPopUp = false }, properties = PopupProperties(
                 focusable = true, dismissOnClickOutside = true
             )
         ) {
@@ -70,53 +78,49 @@ fun ToDoListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(color = Color.White)
-                    .padding(start = 15.dp, end = 15.dp, top = 10.dp, bottom = 150.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(start = 15.dp, end = 15.dp, top = 10.dp, bottom = 150.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = newFilterName,
-                        onValueChange = {
-                            if (it.length <= 20) {
-                                newFilterName = it
-                            }
-                        },
-                        label = { Text(text = "Filter name") },
-                        singleLine = true,
-                        leadingIcon = {
+                        modifier = Modifier.fillMaxWidth(), value = newFilterName, onValueChange = {
+                        if (it.length <= 20) {
+                            newFilterName = it
+                        }
+                    }, label = { Text(text = "Filter name") }, singleLine = true, leadingIcon = {
+                        AnimatedVisibility(
+                            newFilterName.isNotEmpty(), enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(), exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+                        ) {
                             IconButton(onClick = {
-                                if (newFilterName.isNotEmpty()) {
-                                    newFilterName = ""
-                                }
+                                newFilterName = ""
                             }) {
                                 Icon(Icons.Default.Refresh, contentDescription = null)
                             }
-                        },
-                        trailingIcon = {
+                        }
+                        
+                    }, trailingIcon = {
+                        AnimatedVisibility(
+                            visible = newFilterName.isNotEmpty(), enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(), exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+                        ) {
                             IconButton(onClick = {
-                                if (newFilterName.isNotEmpty()) {
-                                    viewModel.addNewFilter(
-                                        filterName = newFilterName, filterColor = colorForFilter
-                                    )
-                                    isShowedPopUp = false
-                                    newFilterName = ""
-                                    colorForFilter = Color.White
-                                }
+                                viewModel.addNewFilter(
+                                    filterName = newFilterName, filterColor = colorForFilter
+                                )
+                                isShowedPopUp = false
+                                newFilterName = ""
+                                colorForFilter = Color.White
                             }) {
                                 Icon(Icons.Default.Check, contentDescription = null)
                             }
-                        },
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedContainerColor = Color.Transparent,
-                        )
+                        }
+                        
+                    }, colors = TextFieldDefaults.colors(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                    )
                     )
                 }
                 HorizontalDivider(color = Color.Black)
@@ -131,9 +135,7 @@ fun ToDoListScreen(
                 ) {
                     items(colorListForFilter) { color ->
                         ColorUI(
-                            color = color,
-                            isActive = color.value == colorForFilter.value,
-                            onClick = {
+                            color = color, isActive = color.value == colorForFilter.value, onClick = {
                                 colorForFilter = color
                             })
                     }
@@ -142,12 +144,9 @@ fun ToDoListScreen(
         }
     }
     
-    CustomModalNavigationDrawer(
-        filterList = filterList,
-        todoList = todoList,
-        drawerState = drawerState,
-        isShowedPopUpClick = { isShowedPopUp = true },
-        onSettingScreenCallBack = { onSettingScreenCallBack() }) {
-        ToDoListDisplay(viewModel = viewModel, drawerState = drawerState, todoList = todoList)
+    CustomModalNavigationDrawer(filterList = filterList, todoList = todoList, drawerState = drawerState, isShowedPopUpClick = { isShowedPopUp = true }, onSettingScreenCallBack = { onSettingScreenCallBack() }) {
+        ToDoListDisplay(
+            drawerState = drawerState, todoList = todoList, filterList = filterList
+        )
     }
 }
